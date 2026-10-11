@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Week Repair — Equipment restriction in a synthetic week</title>
+<style>
+:root{color-scheme:light;--ink:#15292c;--muted:#5d7072;--line:#dce4df;--green:#cceaa8;--paper:#f5f7f1;--white:#fff;--amber:#fff0d9}*{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--paper);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1240px;margin:0 auto;padding:36px 36px 60px}header{display:flex;justify-content:space-between;align-items:center;padding-bottom:25px;border-bottom:1px solid var(--line)}.brand{font-weight:800;font-size:20px;letter-spacing:-.6px}.mark{display:inline-grid;place-items:center;background:var(--ink);color:var(--green);width:32px;height:32px;border-radius:9px;margin-right:10px}.tag{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;font-weight:700}.muted{color:var(--muted)}.intro{padding:36px 0 24px;max-width:840px}h1{font-size:clamp(28px,4vw,44px);line-height:1.12;letter-spacing:-1.5px;margin:12px 0 18px}h2{font-size:19px;letter-spacing:-.3px;margin:0 0 12px}h3{font-size:12px;text-transform:uppercase;letter-spacing:1px}.lead{font-size:17px;line-height:1.65;color:var(--muted);margin:0}.status{display:flex;align-items:flex-start;gap:14px;border:1px solid var(--line);background:#e8f3db;padding:18px 22px;border-radius:14px}.status-icon{font-size:20px}.status strong{display:block}.status p{margin:3px 0 0}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:22px 0}.metric{padding:18px 22px;border:1px solid var(--line);border-radius:14px;background:var(--white)}.metric b{display:block;font-size:29px;letter-spacing:-1px}.metric span{font-size:12px;color:var(--muted)}.panel{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:24px;margin:20px 0}.panel-head{display:flex;justify-content:space-between;gap:20px;align-items:baseline}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th{font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);text-align:left;padding:14px 10px;border-bottom:1px solid var(--line)}td{vertical-align:top;padding:17px 10px;border-bottom:1px solid #edf0ec}tr:last-child td{border:0}td:first-child{min-width:170px}td:nth-child(2),td:nth-child(3){min-width:105px}.reason{min-width:240px;max-width:430px;color:var(--muted)}.sub{display:block;font-size:11px;margin-top:4px}.pill{display:inline-block;background:#eef2ed;border-radius:6px;padding:3px 9px;font-size:11px;font-weight:650;white-space:nowrap}.change{background:#deedfc;color:#224977}.issue{background:var(--amber);color:#784b12}.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}.two>.panel{margin-top:0}.plain-list{padding-left:19px;margin-bottom:0}.plain-list li{margin:7px 0}.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0 24px}.flow span{background:var(--paper);padding:6px 12px;border-radius:7px;font-size:12px}.event{border-top:1px solid var(--line);padding:12px 0}.event summary{cursor:pointer;display:flex;align-items:center;gap:12px;list-style:none;flex-wrap:wrap}.event summary:after{content:'+';margin-left:auto;font-size:22px}.event[open] summary:after{content:'−'}.step{display:inline-grid;place-items:center;width:26px;height:26px;font-size:11px;background:var(--ink);color:#fff;border-radius:50%}.event summary .muted{font-size:12px}.trace-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}pre{font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;background:#12272b;color:#d6e6df;border-radius:9px;padding:16px;max-height:430px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}.errors{color:#894414;font-size:13px}.questions{border-color:#e4c791}footer{padding-top:18px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}a{color:inherit}code{font-family:ui-monospace,monospace;font-size:12px}@media(max-width:760px){main{padding:20px 16px}.metrics{grid-template-columns:1fr 1fr}.two,.trace-grid{grid-template-columns:1fr}.panel{padding:18px}.panel-head{display:block}header .tag{font-size:9px}.intro{padding-top:25px}.event summary{gap:8px}.event summary .muted{width:100%;margin-left:38px}.flow{gap:5px}}
+</style></head><body><main>
+<header><div class="brand"><span class="mark">↗</span>Week Repair</div><span class="tag muted">Synthetic data · Review report</span></header>
+<section class="intro"><div class="tag muted">A plan that fits real life</div><h1>Equipment restriction in a synthetic week</h1><p class="lead">The gym is unavailable for the rest of this week. Preserve the completed session and required runs. Drop optional sessions that need gym equipment; do not substitute exercises.</p></section>
+<section class="status"><div class="status-icon">✓</div><div><strong>Approved by workflow</strong><p>Preserve the completed session and both required runs. Drop the optional gym session because gym equipment is unavailable. Total weekly time is 115 minutes, within the 120-minute limit.</p><span class="sub">Code checks passed and the independent reviewer approved this draft. No calendar was changed.</span></div></section>
+
+<div class="metrics"><div class="metric"><b>0</b><span>Sessions moved</span></div><div class="metric"><b>1</b><span>Sessions dropped</span></div><div class="metric"><b>115<small style="font-size:14px"> min</small></b><span>Proposed week · cap 120 min</span></div><div class="metric"><b>21.2<small style="font-size:14px"> s</small></b><span>Recorded execution time</span></div></div>
+<section class="panel"><div class="panel-head"><h2>What changed</h2><span class="muted" style="font-size:12px">Mon 5 Oct – Sun 11 Oct</span></div><div class="table-wrap"><table><thead><tr><th>Session</th><th>Original</th><th>Proposed</th><th>Decision</th><th>Reason</th></tr></thead><tbody><tr><td><strong>Completed gym session</strong><span class="muted sub">40 min · hard · locked · completed</span></td><td>Tue 6 Oct<span class="muted sub">completed</span></td><td>Tue 6 Oct</td><td><span class="pill ">keep</span></td><td class="reason">Completed and locked; remains exactly unchanged.</td></tr><tr><td><strong>Hard run</strong><span class="muted sub">45 min · hard</span></td><td>Fri 9 Oct<span class="muted sub">planned</span></td><td>Fri 9 Oct</td><td><span class="pill ">keep</span></td><td class="reason">Required run fits the 45-minute availability, uses available equipment, and meets hard-session spacing.</td></tr><tr><td><strong>Optional gym session</strong><span class="muted sub">30 min · easy</span></td><td>Sat 10 Oct<span class="muted sub">planned</span></td><td>Not scheduled</td><td><span class="pill ">drop</span></td><td class="reason">Optional session requires unavailable gym equipment, and no substitutions are allowed.</td></tr><tr><td><strong>Easy run</strong><span class="muted sub">30 min · easy</span></td><td>Sun 11 Oct<span class="muted sub">planned</span></td><td>Sun 11 Oct</td><td><span class="pill ">keep</span></td><td class="reason">Required run fits the 30-minute availability and uses available equipment.</td></tr></tbody></table></div></section>
+<div class="two"><section class="panel"><h2>Rules the code checks</h2><ul class="plain-list"><li>Keep completed and locked sessions unchanged.</li><li>Keep required sessions. Account for every session once.</li><li>Fit daily time, equipment, and session limits.</li><li>Count completed work in the weekly time cap.</li><li>Keep the configured spacing between hard sessions.</li></ul><p class="muted" style="font-size:12px">These are scenario constraints. They do not establish medical or training suitability.</p></section><section class="panel"><h2>Independent review</h2><p><span class="pill ">Reviewer approved</span></p><ul class="plain-list"><li>Preserves the completed, locked session and both required runs without changing their prescriptions.</li><li>Drops only the optional session requiring unavailable gym equipment, with no substitutions.</li><li>The 115-minute total fits the weekly limit; the runs fit daily availability and hard-session spacing.</li></ul></section></div>
+<section class="panel"><h2>Follow the execution</h2><p class="muted" style="margin:0">Open a step to inspect the handoff. The report records what the agents returned and what the code rejected.</p><div class="flow"><span>Planner agent</span>→<span>Code checks</span>→<span>Reviewer agent</span>→<span>Approve or repair</span></div><details class="event"><summary><span class="step">1</span><strong>planner</strong><span class="muted">Round 1 · 11.5s</span></summary><div class="trace-grid"><div><h3>Input</h3><pre>{
+  &quot;scenario&quot;: {
+    &quot;id&quot;: &quot;equipment-restriction&quot;,
+    &quot;title&quot;: &quot;Equipment restriction in a synthetic week&quot;,
+    &quot;request&quot;: &quot;The gym is unavailable for the rest of this week. Preserve the completed session and required runs. Drop optional sessions that need gym equipment; do not substitute exercises.&quot;,
+    &quot;asOf&quot;: &quot;2026-10-08&quot;,
+    &quot;weekStart&quot;: &quot;2026-10-05&quot;,
+    &quot;weekEnd&quot;: &quot;2026-10-11&quot;,
+    &quot;availableMinutes&quot;: {
+      &quot;2026-10-08&quot;: 30,
+      &quot;2026-10-09&quot;: 45,
+      &quot;2026-10-10&quot;: 0,
+      &quot;2026-10-11&quot;: 30
+    },
+    &quot;availableEquipment&quot;: [
+      &quot;running shoes&quot;
+    ],
+    &quot;maxWeeklyMinutes&quot;: 120,
+    &quot;minDaysBetweenHardSessions&quot;: 2,
+    &quot;maxSessionsPerDay&quot;: 1,
+    &quot;sessions&quot;: [
+      {
+        &quot;id&quot;: &quot;completed-gym&quot;,
+        &quot;title&quot;: &quot;Completed gym session&quot;,
+        &quot;date&quot;: &quot;2026-10-06&quot;,
+        &quot;durationMinutes&quot;: 40,
+        &quot;intensity&quot;: &quot;hard&quot;,
+        &quot;equipment&quot;: [
+          &quot;barbell&quot;
+        ],
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;locked&quot;: true,
+        &quot;priority&quot;: &quot;required&quot;
+      },
+      {
+        &quot;id&quot;: &quot;required-run&quot;,
+        &quot;title&quot;: &quot;Hard run&quot;,
+        &quot;date&quot;: &quot;2026-10-09&quot;,
+        &quot;durationMinutes&quot;: 45,
+        &quot;intensity&quot;: &quot;hard&quot;,
+        &quot;equipment&quot;: [
+          &quot;running shoes&quot;
+        ],
+        &quot;status&quot;: &quot;planned&quot;,
+        &quot;locked&quot;: false,
+        &quot;priority&quot;: &quot;required&quot;
+      },
+      {
+        &quot;id&quot;: &quot;optional-gym&quot;,
+        &quot;title&quot;: &quot;Optional gym session&quot;,
+        &quot;date&quot;: &quot;2026-10-10&quot;,
+        &quot;durationMinutes&quot;: 30,
+        &quot;intensity&quot;: &quot;easy&quot;,
+        &quot;equipment&quot;: [
+          &quot;barbell&quot;
+        ],
+        &quot;status&quot;: &quot;planned&quot;,
+        &quot;locked&quot;: false,
+        &quot;priority&quot;: &quot;optional&quot;
+      },
+      {
+        &quot;id&quot;: &quot;required-easy&quot;,
+        &quot;title&quot;: &quot;Easy run&quot;,
+        &quot;date&quot;: &quot;2026-10-11&quot;,
+        &quot;durationMinutes&quot;: 30,
+        &quot;intensity&quot;: &quot;easy&quot;,
+        &quot;equipment&quot;: [
+          &quot;running shoes&quot;
+        ],
+        &quot;status&quot;: &quot;planned&quot;,
+        &quot;locked&quot;: false,
+        &quot;priority&quot;: &quot;required&quot;
+      }
+    ]
+  }
+}</pre></div><div><h3>Output</h3><pre>{
+  &quot;status&quot;: &quot;ready&quot;,
+  &quot;summary&quot;: &quot;Preserve the completed session and both required runs. Drop the optional gym session because gym equipment is unavailable. Total weekly time is 115 minutes, within the 120-minute limit.&quot;,
+  &quot;decisions&quot;: [
+    {
+      &quot;sessionId&quot;: &quot;completed-gym&quot;,
+      &quot;action&quot;: &quot;keep&quot;,
+      &quot;date&quot;: &quot;2026-10-06&quot;,
+      &quot;reason&quot;: &quot;Completed and locked; remains exactly unchanged.&quot;
+    },
+    {
+      &quot;sessionId&quot;: &quot;required-run&quot;,
+      &quot;action&quot;: &quot;keep&quot;,
+      &quot;date&quot;: &quot;2026-10-09&quot;,
+      &quot;reason&quot;: &quot;Required run fits the 45-minute availability, uses available equipment, and meets hard-session spacing.&quot;
+    },
+    {
+      &quot;sessionId&quot;: &quot;optional-gym&quot;,
+      &quot;action&quot;: &quot;drop&quot;,
+      &quot;date&quot;: null,
+      &quot;reason&quot;: &quot;Optional session requires unavailable gym equipment, and no substitutions are allowed.&quot;
+    },
+    {
+      &quot;sessionId&quot;: &quot;required-easy&quot;,
+      &quot;action&quot;: &quot;keep&quot;,
+      &quot;date&quot;: &quot;2026-10-11&quot;,
+      &quot;reason&quot;: &quot;Required run fits the 30-minute availability and uses available equipment.&quot;
+    }
+  ],
+  &quot;questions&quot;: []
+}</pre></div></div></details><details class="event"><summary><span class="step">2</span><strong>validator</strong><span class="muted">Round 1 · 0.0s</span></summary><div class="trace-grid"><div><h3>Input</h3><pre>{
+  &quot;status&quot;: &quot;ready&quot;,
+  &quot;summary&quot;: &quot;Preserve the completed session and both required runs. Drop the optional gym session because gym equipment is unavailable. Total weekly time is 115 minutes, within the 120-minute limit.&quot;,
+  &quot;decisions&quot;: [
+    {
+      &quot;sessionId&quot;: &quot;completed-gym&quot;,
+      &quot;action&quot;: &quot;keep&quot;,
+      &quot;date&quot;: &quot;2026-10-06&quot;,
+      &quot;reason&quot;: &quot;Completed and locked; remains exactly unchanged.&quot;
+    },
+    {
+      &quot;sessionId&quot;: &quot;required-run&quot;,
+      &quot;action&quot;: &quot;keep&quot;,
+      &quot;date&quot;: &quot;2026-10-09&quot;,
+      &quot;reason&quot;: &quot;Required run fits the 45-minute availability, uses available equipment, and meets hard-session spacing.&quot;
+    },
+    {
+      &quot;sessionId&quot;: &quot;optional-gym&quot;,
+      &quot;action&quot;: &quot;drop&quot;,
+      &quot;date&quot;: null,
+      &quot;reason&quot;: &quot;Optional session requires unavailable gym equipment, and no substitutions are allowed.&quot;
+    },
+    {
+      &quot;sessionId&quot;: &quot;required-easy&quot;,
+      &quot;action&quot;: &quot;keep&quot;,
+      &quot;date&quot;: &quot;2026-10-11&quot;,
+      &quot;reason&quot;: &quot;Required run fits the 30-minute availability and uses available equipment.&quot;
+    }
+  ],
+  &quot;questions&quot;: []
+}</pre></div><div><h3>Output</h3><pre>{
+  &quot;violations&quot;: []
+}</pre></div></div></details><details class="event"><summary><span class="step">3</span><strong>reviewer</strong><span class="muted">Round 1 · 9.7s</span></summary><div class="trace-grid"><div><h3>Input</h3><pre>{
+  &quot;scenario&quot;: {
+    &quot;id&quot;: &quot;equipment-restriction&quot;,
+    &quot;title&quot;: &quot;Equipment restriction in a synthetic week&quot;,
+    &quot;request&quot;: &quot;The gym is unavailable for the rest of this week. Preserve the completed session and required runs. Drop optional sessions that need gym equipment; do not substitute exercises.&quot;,
+    &quot;asOf&quot;: &quot;2026-10-08&quot;,
+    &quot;weekStart&quot;: &quot;2026-10-05&quot;,
+    &quot;weekEnd&quot;: &quot;2026-10-11&quot;,
+    &quot;availableMinutes&quot;: {
+      &quot;2026-10-08&quot;: 30,
+      &quot;2026-10-09&quot;: 45,
+      &quot;2026-10-10&quot;: 0,
+      &quot;2026-10-11&quot;: 30
+    },
+    &quot;availableEquipment&quot;: [
+      &quot;running shoes&quot;
+    ],
+    &quot;maxWeeklyMinutes&quot;: 120,
+    &quot;minDaysBetweenHardSessions&quot;: 2,
+    &quot;maxSessionsPerDay&quot;: 1,
+    &quot;sessions&quot;: [
+      {
+        &quot;id&quot;: &quot;completed-gym&quot;,
+        &quot;title&quot;: &quot;Completed gym session&quot;,
+        &quot;date&quot;: &quot;2026-10-06&quot;,
+        &quot;durationMinutes&quot;: 40,
+        &quot;intensity&quot;: &quot;hard&quot;,
+        &quot;equipment&quot;: [
+          &quot;barbell&quot;
+        ],
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;locked&quot;: true,
+        &quot;priority&quot;: &quot;required&quot;
+      },
+      {
+        &quot;id&quot;: &quot;required-run&quot;,
+        &quot;title&quot;: &quot;Hard run&quot;,
+        &quot;date&quot;: &quot;2026-10-09&quot;,
+        &quot;durationMinutes&quot;: 45,
+        &quot;intensity&quot;: &quot;hard&quot;,
+        &quot;equipment&quot;: [
+          &quot;running shoes&quot;
+        ],
+        &quot;status&quot;: &quot;planned&quot;,
+        &quot;locked&quot;: false,
+        &quot;priority&quot;: &quot;required&quot;
+      },
+      {
+        &quot;id&quot;: &quot;optional-gym&quot;,
+        &quot;title&quot;: &quot;Optional gym session&quot;,
+        &quot;date&quot;: &quot;2026-10-10&quot;,
+        &quot;durationMinutes&quot;: 30,
+        &quot;intensity&quot;: &quot;easy&quot;,
+        &quot;equipment&quot;: [
+          &quot;barbell&quot;
+        ],
+        &quot;status&quot;: &quot;planned&quot;,
+        &quot;locked&quot;: false,
+        &quot;priority&quot;: &quot;optional&quot;
+      },
+      {
+        &quot;id&quot;: &quot;required-easy&quot;,
+        &quot;title&quot;: &quot;Easy run&quot;,
+        &quot;date&quot;: &quot;2026-10-11&quot;,
+        &quot;durationMinutes&quot;: 30,
+        &quot;intensity&quot;: &quot;easy&quot;,
+        &quot;equipment&quot;: [
+          &quot;running shoes&quot;
+        ],
+        &quot;status&quot;: &quot;planned&quot;,
+        &quot;locked&quot;: false,
+        &quot;priority&quot;: &quot;required&quot;
+      }
+    ]
+  },
+  &quot;proposal&quot;: {
+    &quot;status&quot;: &quot;ready&quot;,
+    &quot;summary&quot;: &quot;Preserve the completed session and both required runs. Drop the optional gym session because gym equipment is unavailable. Total weekly time is 115 minutes, within the 120-minute limit.&quot;,
+    &quot;decisions&quot;: [
+      {
+        &quot;sessionId&quot;: &quot;completed-gym&quot;,
+        &quot;action&quot;: &quot;keep&quot;,
+        &quot;date&quot;: &quot;2026-10-06&quot;,
+        &quot;reason&quot;: &quot;Completed and locked; remains exactly unchanged.&quot;
+      },
+      {
+        &quot;sessionId&quot;: &quot;required-run&quot;,
+        &quot;action&quot;: &quot;keep&quot;,
+        &quot;date&quot;: &quot;2026-10-09&quot;,
+        &quot;reason&quot;: &quot;Required run fits the 45-minute availability, uses available equipment, and meets hard-session spacing.&quot;
+      },
+      {
+        &quot;sessionId&quot;: &quot;optional-gym&quot;,
+        &quot;action&quot;: &quot;drop&quot;,
+        &quot;date&quot;: null,
+        &quot;reason&quot;: &quot;Optional session requires unavailable gym equipment, and no substitutions are allowed.&quot;
+      },
+      {
+        &quot;sessionId&quot;: &quot;required-easy&quot;,
+        &quot;action&quot;: &quot;keep&quot;,
+        &quot;date&quot;: &quot;2026-10-11&quot;,
+        &quot;reason&quot;: &quot;Required run fits the 30-minute availability and uses available equipment.&quot;
+      }
+    ],
+    &quot;questions&quot;: []
+  },
+  &quot;deterministicViolations&quot;: []
+}</pre></div><div><h3>Output</h3><pre>{
+  &quot;approved&quot;: true,
+  &quot;issues&quot;: [],
+  &quot;strengths&quot;: [
+    &quot;Preserves the completed, locked session and both required runs without changing their prescriptions.&quot;,
+    &quot;Drops only the optional session requiring unavailable gym equipment, with no substitutions.&quot;,
+    &quot;The 115-minute total fits the weekly limit; the runs fit daily availability and hard-session spacing.&quot;
+  ]
+}</pre></div></div></details></section>
+<footer><span>Provider: <code>live:codex-cli:gpt-6.1-sol</code><br>Run started: 2026-10-11T20:38:19.098Z</span><span>Standalone prototype · Existing session prescriptions stay unchanged.<br>Saved reports show recorded runs. Opening this file makes no model calls.</span></footer>
+</main></body></html>

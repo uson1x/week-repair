@@ -1,7 +1,5 @@
 # Week Repair: build contract
 
-Build deadline: 2026-10-11 20:50 UTC. Target working implementation by 20:43 UTC.
-
 TypeScript CLI. No database, account, deployed service, or access to ATP code. A static HTML report is a review artifact. Two real independent model steps: Planner proposes a repair, Reviewer checks intent and tradeoffs. Deterministic checks control acceptance. At most two repair rounds. Do not change exercise prescriptions or claim medical validity.
 
 Input `Scenario`: `id`, `title`, `request`, `asOf` (YYYY-MM-DD), `weekStart`, `weekEnd`, `availableMinutes` (date:number), `availableEquipment` (string[]), `maxWeeklyMinutes` (number), `minDaysBetweenHardSessions` (number, day distance), `maxSessionsPerDay` (number), `sessions` (Session[]).
@@ -18,4 +16,3 @@ Pipeline: `runWorkflow(scenario, provider, options?)` returns a WorkflowResult. 
 
 Output report accepts WorkflowResult and uses escaped text. Distinguish live model execution from replay/fixture evidence. Public examples contain synthetic data only. No hidden assessment wording, private CV, employer code, or personal files in repo.
 
-Ownership: core agent owns src/domain.ts, src/validate.ts, fixtures/, tests/validate.test.ts. Runtime agent owns src/provider.ts, src/workflow.ts, src/prompts.ts, src/cli.ts, tests/workflow.test.ts. Root owns src/report.ts, package/config/CI, integration, docs polish and release. Docs agent owns README.md, docs/ARCHITECTURE.md, docs/REVIEW.md, docs/DECISIONS.md, docs/FAILURES.md. Private answer tracker lives outside this public repo.

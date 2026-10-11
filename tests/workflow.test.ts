@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, writeFile, chmod, rm } from 'node:fs/promises';
+import { mkdtemp, writeFile, readFile, chmod, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { renderReport } from '../src/report.js';
@@ -186,4 +186,22 @@ test('Codex test executable receives isolated schema, fresh cwd, stdin and disab
     // Provider removes each isolated work directory after reading the result.
     await assert.rejects(import('node:fs/promises').then(fs => fs.stat(output.cwd)), /ENOENT/);
   } finally { await rm(dir, { recursive: true, force: true }); }
+});
+
+
+test('accepted clarification for an impossible required week stops after one review without publishing a schedule', async () => {
+  const impossible = JSON.parse(await readFile(new URL('../fixtures/impossible-required.json', import.meta.url), 'utf8')) as Scenario;
+  const clarification = {
+    status: 'needs_clarification',
+    summary: 'The two required 30-minute sessions need 60 minutes and two slots; Sunday has 30 minutes and one slot.',
+    decisions: [],
+    questions: ['Can you extend the scheduling window, or change the requirement to keep both sessions?'],
+  };
+  const provider = new ScriptedFake([clarification, { approved: true, issues: [], strengths: ['The specific question identifies the conflicting constraints.'] }]);
+  const result = await runWorkflow(impossible, provider);
+  assert.equal(result.status, 'needs_clarification');
+  assert.equal(result.proposal!.status, 'needs_clarification');
+  assert.equal(result.review!.approved, true);
+  assert.equal(provider.calls.length, 2);
+  assert.deepEqual(result.trace.map(event => event.attempt), [1, 1, 1]);
 });

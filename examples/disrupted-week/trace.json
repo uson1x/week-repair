@@ -1,0 +1,415 @@
+{
+  "mode": "live",
+  "scenario": {
+    "id": "disrupted-week",
+    "title": "A disrupted synthetic training week",
+    "request": "I missed Wednesday's hard session. Fit the required sessions into the remaining week, preserve completed work, and drop the optional recovery session only if needed. Keep the prescribed sessions unchanged.",
+    "asOf": "2026-10-08",
+    "weekStart": "2026-10-05",
+    "weekEnd": "2026-10-11",
+    "availableMinutes": {
+      "2026-10-08": 45,
+      "2026-10-09": 30,
+      "2026-10-10": 50,
+      "2026-10-11": 30
+    },
+    "availableEquipment": [
+      "running shoes",
+      "mat"
+    ],
+    "maxWeeklyMinutes": 155,
+    "minDaysBetweenHardSessions": 2,
+    "maxSessionsPerDay": 1,
+    "sessions": [
+      {
+        "id": "monday-hard",
+        "title": "Hard run",
+        "date": "2026-10-05",
+        "durationMinutes": 40,
+        "intensity": "hard",
+        "equipment": [
+          "running shoes"
+        ],
+        "status": "completed",
+        "locked": true,
+        "priority": "required"
+      },
+      {
+        "id": "wednesday-hard",
+        "title": "Hard run",
+        "date": "2026-10-07",
+        "durationMinutes": 45,
+        "intensity": "hard",
+        "equipment": [
+          "running shoes"
+        ],
+        "status": "missed",
+        "locked": false,
+        "priority": "required"
+      },
+      {
+        "id": "friday-easy",
+        "title": "Easy run",
+        "date": "2026-10-09",
+        "durationMinutes": 20,
+        "intensity": "easy",
+        "equipment": [
+          "running shoes"
+        ],
+        "status": "planned",
+        "locked": false,
+        "priority": "required"
+      },
+      {
+        "id": "saturday-hard",
+        "title": "Hard run",
+        "date": "2026-10-10",
+        "durationMinutes": 50,
+        "intensity": "hard",
+        "equipment": [
+          "running shoes"
+        ],
+        "status": "planned",
+        "locked": false,
+        "priority": "required"
+      },
+      {
+        "id": "sunday-recovery",
+        "title": "Recovery session",
+        "date": "2026-10-11",
+        "durationMinutes": 20,
+        "intensity": "easy",
+        "equipment": [
+          "mat"
+        ],
+        "status": "planned",
+        "locked": false,
+        "priority": "optional"
+      }
+    ]
+  },
+  "provider": "live:codex-cli:gpt-6.1-sol",
+  "trace": [
+    {
+      "stage": "planner",
+      "attempt": 1,
+      "durationMs": 14385,
+      "input": {
+        "scenario": {
+          "id": "disrupted-week",
+          "title": "A disrupted synthetic training week",
+          "request": "I missed Wednesday's hard session. Fit the required sessions into the remaining week, preserve completed work, and drop the optional recovery session only if needed. Keep the prescribed sessions unchanged.",
+          "asOf": "2026-10-08",
+          "weekStart": "2026-10-05",
+          "weekEnd": "2026-10-11",
+          "availableMinutes": {
+            "2026-10-08": 45,
+            "2026-10-09": 30,
+            "2026-10-10": 50,
+            "2026-10-11": 30
+          },
+          "availableEquipment": [
+            "running shoes",
+            "mat"
+          ],
+          "maxWeeklyMinutes": 155,
+          "minDaysBetweenHardSessions": 2,
+          "maxSessionsPerDay": 1,
+          "sessions": [
+            {
+              "id": "monday-hard",
+              "title": "Hard run",
+              "date": "2026-10-05",
+              "durationMinutes": 40,
+              "intensity": "hard",
+              "equipment": [
+                "running shoes"
+              ],
+              "status": "completed",
+              "locked": true,
+              "priority": "required"
+            },
+            {
+              "id": "wednesday-hard",
+              "title": "Hard run",
+              "date": "2026-10-07",
+              "durationMinutes": 45,
+              "intensity": "hard",
+              "equipment": [
+                "running shoes"
+              ],
+              "status": "missed",
+              "locked": false,
+              "priority": "required"
+            },
+            {
+              "id": "friday-easy",
+              "title": "Easy run",
+              "date": "2026-10-09",
+              "durationMinutes": 20,
+              "intensity": "easy",
+              "equipment": [
+                "running shoes"
+              ],
+              "status": "planned",
+              "locked": false,
+              "priority": "required"
+            },
+            {
+              "id": "saturday-hard",
+              "title": "Hard run",
+              "date": "2026-10-10",
+              "durationMinutes": 50,
+              "intensity": "hard",
+              "equipment": [
+                "running shoes"
+              ],
+              "status": "planned",
+              "locked": false,
+              "priority": "required"
+            },
+            {
+              "id": "sunday-recovery",
+              "title": "Recovery session",
+              "date": "2026-10-11",
+              "durationMinutes": 20,
+              "intensity": "easy",
+              "equipment": [
+                "mat"
+              ],
+              "status": "planned",
+              "locked": false,
+              "priority": "optional"
+            }
+          ]
+        }
+      },
+      "output": {
+        "status": "ready",
+        "summary": "Move the missed hard run to Thursday and drop optional recovery to meet the 155-minute weekly limit. Keep completed work and all prescriptions unchanged, with hard sessions at least two days apart.",
+        "decisions": [
+          {
+            "sessionId": "monday-hard",
+            "action": "keep",
+            "date": "2026-10-05",
+            "reason": "Completed and locked; preserve exactly unchanged."
+          },
+          {
+            "sessionId": "wednesday-hard",
+            "action": "move",
+            "date": "2026-10-08",
+            "reason": "Thursday has the required 45 minutes and preserves spacing between hard sessions."
+          },
+          {
+            "sessionId": "friday-easy",
+            "action": "keep",
+            "date": "2026-10-09",
+            "reason": "Required 20-minute run fits Friday's availability."
+          },
+          {
+            "sessionId": "saturday-hard",
+            "action": "keep",
+            "date": "2026-10-10",
+            "reason": "Required 50-minute run fits Saturday and is two days after Thursday's hard run."
+          },
+          {
+            "sessionId": "sunday-recovery",
+            "action": "drop",
+            "date": null,
+            "reason": "Required sessions total 155 minutes; keeping this optional session would exceed the weekly limit by 20 minutes."
+          }
+        ],
+        "questions": []
+      }
+    },
+    {
+      "stage": "validator",
+      "attempt": 1,
+      "durationMs": 8,
+      "input": {
+        "status": "ready",
+        "summary": "Move the missed hard run to Thursday and drop optional recovery to meet the 155-minute weekly limit. Keep completed work and all prescriptions unchanged, with hard sessions at least two days apart.",
+        "decisions": [
+          {
+            "sessionId": "monday-hard",
+            "action": "keep",
+            "date": "2026-10-05",
+            "reason": "Completed and locked; preserve exactly unchanged."
+          },
+          {
+            "sessionId": "wednesday-hard",
+            "action": "move",
+            "date": "2026-10-08",
+            "reason": "Thursday has the required 45 minutes and preserves spacing between hard sessions."
+          },
+          {
+            "sessionId": "friday-easy",
+            "action": "keep",
+            "date": "2026-10-09",
+            "reason": "Required 20-minute run fits Friday's availability."
+          },
+          {
+            "sessionId": "saturday-hard",
+            "action": "keep",
+            "date": "2026-10-10",
+            "reason": "Required 50-minute run fits Saturday and is two days after Thursday's hard run."
+          },
+          {
+            "sessionId": "sunday-recovery",
+            "action": "drop",
+            "date": null,
+            "reason": "Required sessions total 155 minutes; keeping this optional session would exceed the weekly limit by 20 minutes."
+          }
+        ],
+        "questions": []
+      },
+      "output": {
+        "violations": []
+      },
+      "errors": []
+    },
+    {
+      "stage": "reviewer",
+      "attempt": 1,
+      "durationMs": 9083,
+      "input": {
+        "scenario": {
+          "id": "disrupted-week",
+          "title": "A disrupted synthetic training week",
+          "request": "I missed Wednesday's hard session. Fit the required sessions into the remaining week, preserve completed work, and drop the optional recovery session only if needed. Keep the prescribed sessions unchanged.",
+          "asOf": "2026-10-08",
+          "weekStart": "2026-10-05",
+          "weekEnd": "2026-10-11",
+          "availableMinutes": {
+            "2026-10-08": 45,
+            "2026-10-09": 30,
+            "2026-10-10": 50,
+            "2026-10-11": 30
+          },
+          "availableEquipment": [
+            "running shoes",
+            "mat"
+          ],
+          "maxWeeklyMinutes": 155,
+          "minDaysBetweenHardSessions": 2,
+          "maxSessionsPerDay": 1,
+          "sessions": [
+            {
+              "id": "monday-hard",
+              "title": "Hard run",
+              "date": "2026-10-05",
+              "durationMinutes": 40,
+              "intensity": "hard",
+              "equipment": [
+                "running shoes"
+              ],
+              "status": "completed",
+              "locked": true,
+              "priority": "required"
+            },
+            {
+              "id": "wednesday-hard",
+              "title": "Hard run",
+              "date": "2026-10-07",
+              "durationMinutes": 45,
+              "intensity": "hard",
+              "equipment": [
+                "running shoes"
+              ],
+              "status": "missed",
+              "locked": false,
+              "priority": "required"
+            },
+            {
+              "id": "friday-easy",
+              "title": "Easy run",
+              "date": "2026-10-09",
+              "durationMinutes": 20,
+              "intensity": "easy",
+              "equipment": [
+                "running shoes"
+              ],
+              "status": "planned",
+              "locked": false,
+              "priority": "required"
+            },
+            {
+              "id": "saturday-hard",
+              "title": "Hard run",
+              "date": "2026-10-10",
+              "durationMinutes": 50,
+              "intensity": "hard",
+              "equipment": [
+                "running shoes"
+              ],
+              "status": "planned",
+              "locked": false,
+              "priority": "required"
+            },
+            {
+              "id": "sunday-recovery",
+              "title": "Recovery session",
+              "date": "2026-10-11",
+              "durationMinutes": 20,
+              "intensity": "easy",
+              "equipment": [
+                "mat"
+              ],
+              "status": "planned",
+              "locked": false,
+              "priority": "optional"
+            }
+          ]
+        },
+        "proposal": {
+          "status": "ready",
+          "summary": "Move the missed hard run to Thursday and drop optional recovery to meet the 155-minute weekly limit. Keep completed work and all prescriptions unchanged, with hard sessions at least two days apart.",
+          "decisions": [
+            {
+              "sessionId": "monday-hard",
+              "action": "keep",
+              "date": "2026-10-05",
+              "reason": "Completed and locked; preserve exactly unchanged."
+            },
+            {
+              "sessionId": "wednesday-hard",
+              "action": "move",
+              "date": "2026-10-08",
+              "reason": "Thursday has the required 45 minutes and preserves spacing between hard sessions."
+            },
+            {
+              "sessionId": "friday-easy",
+              "action": "keep",
+              "date": "2026-10-09",
+              "reason": "Required 20-minute run fits Friday's availability."
+            },
+            {
+              "sessionId": "saturday-hard",
+              "action": "keep",
+              "date": "2026-10-10",
+              "reason": "Required 50-minute run fits Saturday and is two days after Thursday's hard run."
+            },
+            {
+              "sessionId": "sunday-recovery",
+              "action": "drop",
+              "date": null,
+              "reason": "Required sessions total 155 minutes; keeping this optional session would exceed the weekly limit by 20 minutes."
+            }
+          ],
+          "questions": []
+        },
+        "deterministicViolations": []
+      },
+      "output": {
+        "approved": true,
+        "issues": [],
+        "strengths": [
+          "Preserves completed work and all required sessions without changing prescriptions.",
+          "Thursday's moved run fits availability and keeps hard sessions at least two days apart.",
+          "Required sessions total 155 minutes, so dropping the optional recovery session is necessary."
+        ]
+      },
+      "errors": []
+    }
+  ]
+}

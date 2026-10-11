@@ -1,0 +1,355 @@
+{
+  "mode": "live",
+  "scenario": {
+    "id": "equipment-restriction",
+    "title": "Equipment restriction in a synthetic week",
+    "request": "The gym is unavailable for the rest of this week. Preserve the completed session and required runs. Drop optional sessions that need gym equipment; do not substitute exercises.",
+    "asOf": "2026-10-08",
+    "weekStart": "2026-10-05",
+    "weekEnd": "2026-10-11",
+    "availableMinutes": {
+      "2026-10-08": 30,
+      "2026-10-09": 45,
+      "2026-10-10": 0,
+      "2026-10-11": 30
+    },
+    "availableEquipment": [
+      "running shoes"
+    ],
+    "maxWeeklyMinutes": 120,
+    "minDaysBetweenHardSessions": 2,
+    "maxSessionsPerDay": 1,
+    "sessions": [
+      {
+        "id": "completed-gym",
+        "title": "Completed gym session",
+        "date": "2026-10-06",
+        "durationMinutes": 40,
+        "intensity": "hard",
+        "equipment": [
+          "barbell"
+        ],
+        "status": "completed",
+        "locked": true,
+        "priority": "required"
+      },
+      {
+        "id": "required-run",
+        "title": "Hard run",
+        "date": "2026-10-09",
+        "durationMinutes": 45,
+        "intensity": "hard",
+        "equipment": [
+          "running shoes"
+        ],
+        "status": "planned",
+        "locked": false,
+        "priority": "required"
+      },
+      {
+        "id": "optional-gym",
+        "title": "Optional gym session",
+        "date": "2026-10-10",
+        "durationMinutes": 30,
+        "intensity": "easy",
+        "equipment": [
+          "barbell"
+        ],
+        "status": "planned",
+        "locked": false,
+        "priority": "optional"
+      },
+      {
+        "id": "required-easy",
+        "title": "Easy run",
+        "date": "2026-10-11",
+        "durationMinutes": 30,
+        "intensity": "easy",
+        "equipment": [
+          "running shoes"
+        ],
+        "status": "planned",
+        "locked": false,
+        "priority": "required"
+      }
+    ]
+  },
+  "provider": "live:codex-cli:gpt-6.1-sol",
+  "trace": [
+    {
+      "stage": "planner",
+      "attempt": 1,
+      "durationMs": 11523,
+      "input": {
+        "scenario": {
+          "id": "equipment-restriction",
+          "title": "Equipment restriction in a synthetic week",
+          "request": "The gym is unavailable for the rest of this week. Preserve the completed session and required runs. Drop optional sessions that need gym equipment; do not substitute exercises.",
+          "asOf": "2026-10-08",
+          "weekStart": "2026-10-05",
+          "weekEnd": "2026-10-11",
+          "availableMinutes": {
+            "2026-10-08": 30,
+            "2026-10-09": 45,
+            "2026-10-10": 0,
+            "2026-10-11": 30
+          },
+          "availableEquipment": [
+            "running shoes"
+          ],
+          "maxWeeklyMinutes": 120,
+          "minDaysBetweenHardSessions": 2,
+          "maxSessionsPerDay": 1,
+          "sessions": [
+            {
+              "id": "completed-gym",
+              "title": "Completed gym session",
+              "date": "2026-10-06",
+              "durationMinutes": 40,
+              "intensity": "hard",
+              "equipment": [
+                "barbell"
+              ],
+              "status": "completed",
+              "locked": true,
+              "priority": "required"
+            },
+            {
+              "id": "required-run",
+              "title": "Hard run",
+              "date": "2026-10-09",
+              "durationMinutes": 45,
+              "intensity": "hard",
+              "equipment": [
+                "running shoes"
+              ],
+              "status": "planned",
+              "locked": false,
+              "priority": "required"
+            },
+            {
+              "id": "optional-gym",
+              "title": "Optional gym session",
+              "date": "2026-10-10",
+              "durationMinutes": 30,
+              "intensity": "easy",
+              "equipment": [
+                "barbell"
+              ],
+              "status": "planned",
+              "locked": false,
+              "priority": "optional"
+            },
+            {
+              "id": "required-easy",
+              "title": "Easy run",
+              "date": "2026-10-11",
+              "durationMinutes": 30,
+              "intensity": "easy",
+              "equipment": [
+                "running shoes"
+              ],
+              "status": "planned",
+              "locked": false,
+              "priority": "required"
+            }
+          ]
+        }
+      },
+      "output": {
+        "status": "ready",
+        "summary": "Preserve the completed session and both required runs. Drop the optional gym session because gym equipment is unavailable. Total weekly time is 115 minutes, within the 120-minute limit.",
+        "decisions": [
+          {
+            "sessionId": "completed-gym",
+            "action": "keep",
+            "date": "2026-10-06",
+            "reason": "Completed and locked; remains exactly unchanged."
+          },
+          {
+            "sessionId": "required-run",
+            "action": "keep",
+            "date": "2026-10-09",
+            "reason": "Required run fits the 45-minute availability, uses available equipment, and meets hard-session spacing."
+          },
+          {
+            "sessionId": "optional-gym",
+            "action": "drop",
+            "date": null,
+            "reason": "Optional session requires unavailable gym equipment, and no substitutions are allowed."
+          },
+          {
+            "sessionId": "required-easy",
+            "action": "keep",
+            "date": "2026-10-11",
+            "reason": "Required run fits the 30-minute availability and uses available equipment."
+          }
+        ],
+        "questions": []
+      }
+    },
+    {
+      "stage": "validator",
+      "attempt": 1,
+      "durationMs": 9,
+      "input": {
+        "status": "ready",
+        "summary": "Preserve the completed session and both required runs. Drop the optional gym session because gym equipment is unavailable. Total weekly time is 115 minutes, within the 120-minute limit.",
+        "decisions": [
+          {
+            "sessionId": "completed-gym",
+            "action": "keep",
+            "date": "2026-10-06",
+            "reason": "Completed and locked; remains exactly unchanged."
+          },
+          {
+            "sessionId": "required-run",
+            "action": "keep",
+            "date": "2026-10-09",
+            "reason": "Required run fits the 45-minute availability, uses available equipment, and meets hard-session spacing."
+          },
+          {
+            "sessionId": "optional-gym",
+            "action": "drop",
+            "date": null,
+            "reason": "Optional session requires unavailable gym equipment, and no substitutions are allowed."
+          },
+          {
+            "sessionId": "required-easy",
+            "action": "keep",
+            "date": "2026-10-11",
+            "reason": "Required run fits the 30-minute availability and uses available equipment."
+          }
+        ],
+        "questions": []
+      },
+      "output": {
+        "violations": []
+      },
+      "errors": []
+    },
+    {
+      "stage": "reviewer",
+      "attempt": 1,
+      "durationMs": 9697,
+      "input": {
+        "scenario": {
+          "id": "equipment-restriction",
+          "title": "Equipment restriction in a synthetic week",
+          "request": "The gym is unavailable for the rest of this week. Preserve the completed session and required runs. Drop optional sessions that need gym equipment; do not substitute exercises.",
+          "asOf": "2026-10-08",
+          "weekStart": "2026-10-05",
+          "weekEnd": "2026-10-11",
+          "availableMinutes": {
+            "2026-10-08": 30,
+            "2026-10-09": 45,
+            "2026-10-10": 0,
+            "2026-10-11": 30
+          },
+          "availableEquipment": [
+            "running shoes"
+          ],
+          "maxWeeklyMinutes": 120,
+          "minDaysBetweenHardSessions": 2,
+          "maxSessionsPerDay": 1,
+          "sessions": [
+            {
+              "id": "completed-gym",
+              "title": "Completed gym session",
+              "date": "2026-10-06",
+              "durationMinutes": 40,
+              "intensity": "hard",
+              "equipment": [
+                "barbell"
+              ],
+              "status": "completed",
+              "locked": true,
+              "priority": "required"
+            },
+            {
+              "id": "required-run",
+              "title": "Hard run",
+              "date": "2026-10-09",
+              "durationMinutes": 45,
+              "intensity": "hard",
+              "equipment": [
+                "running shoes"
+              ],
+              "status": "planned",
+              "locked": false,
+              "priority": "required"
+            },
+            {
+              "id": "optional-gym",
+              "title": "Optional gym session",
+              "date": "2026-10-10",
+              "durationMinutes": 30,
+              "intensity": "easy",
+              "equipment": [
+                "barbell"
+              ],
+              "status": "planned",
+              "locked": false,
+              "priority": "optional"
+            },
+            {
+              "id": "required-easy",
+              "title": "Easy run",
+              "date": "2026-10-11",
+              "durationMinutes": 30,
+              "intensity": "easy",
+              "equipment": [
+                "running shoes"
+              ],
+              "status": "planned",
+              "locked": false,
+              "priority": "required"
+            }
+          ]
+        },
+        "proposal": {
+          "status": "ready",
+          "summary": "Preserve the completed session and both required runs. Drop the optional gym session because gym equipment is unavailable. Total weekly time is 115 minutes, within the 120-minute limit.",
+          "decisions": [
+            {
+              "sessionId": "completed-gym",
+              "action": "keep",
+              "date": "2026-10-06",
+              "reason": "Completed and locked; remains exactly unchanged."
+            },
+            {
+              "sessionId": "required-run",
+              "action": "keep",
+              "date": "2026-10-09",
+              "reason": "Required run fits the 45-minute availability, uses available equipment, and meets hard-session spacing."
+            },
+            {
+              "sessionId": "optional-gym",
+              "action": "drop",
+              "date": null,
+              "reason": "Optional session requires unavailable gym equipment, and no substitutions are allowed."
+            },
+            {
+              "sessionId": "required-easy",
+              "action": "keep",
+              "date": "2026-10-11",
+              "reason": "Required run fits the 30-minute availability and uses available equipment."
+            }
+          ],
+          "questions": []
+        },
+        "deterministicViolations": []
+      },
+      "output": {
+        "approved": true,
+        "issues": [],
+        "strengths": [
+          "Preserves the completed, locked session and both required runs without changing their prescriptions.",
+          "Drops only the optional session requiring unavailable gym equipment, with no substitutions.",
+          "The 115-minute total fits the weekly limit; the runs fit daily availability and hard-session spacing."
+        ]
+      },
+      "errors": []
+    }
+  ]
+}
