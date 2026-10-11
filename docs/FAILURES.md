@@ -20,7 +20,15 @@ See [the regression test](../tests/validate.test.ts) and [the validation boundar
 
 **Evidence type: live provider execution failure.** The first Claude CLI attempt stopped at the Planner stage with `Claude exited with 1`; its diagnostic output reported `Not logged in`. No plan was approved and no Reviewer call completed in that run. This was a local authentication problem, not a scheduling or model-reasoning failure.
 
-The blocked result was captured at `2026-10-11T20:33:59.205Z`. The final implementation uses the available Codex CLI login. The unused Claude adapter was removed. A complete Codex run and its final evidence are pending verification.
+The blocked result was captured at `2026-10-11T20:33:59.205Z`. The final implementation uses the available Codex CLI login. The unused Claude adapter was removed.
+
+## 3. The final provider completed a live repair
+
+**Evidence type: actual Codex CLI execution with synthetic input.** The saved [result](../examples/disrupted-week/result.json), [stage trace](../examples/disrupted-week/trace.json), and [HTML report](../examples/disrupted-week/report.html) record a run started at `2026-10-11T20:37:06.848Z`, using `live:codex-cli:gpt-6.1-sol`.
+
+The Planner took 14,385 ms, deterministic validation took 8 ms, and the independent Reviewer took 9,083 ms. Total elapsed time was 23,480 ms. The first proposal passed validation and review; no repair retry was needed. It moved the missed hard run to Thursday and dropped an optional recovery session to meet the weekly limit. Completed work and all required sessions were preserved.
+
+This run proves that both live model stages executed for this scenario. It does not measure production reliability or prove that a live retry will converge. Controlled workflow tests cover retry and blocked paths.
 
 ## Verification status
 
@@ -30,7 +38,7 @@ The blocked result was captured at `2026-10-11T20:33:59.205Z`. The final impleme
 | Focused validator regression suite | 14 passed after the enum fix |
 | Full deterministic, workflow, and report tests | 34 passed after the Codex provider implementation |
 | Offline saved-result demo and report inspection | Pending |
-| Live Planner and Reviewer calls | Complete Codex run pending |
-| Saved live JSON trace and HTML report | Pending |
+| Live Planner and Reviewer calls | Both completed on the first attempt; result approved |
+| Saved live JSON trace and HTML report | Saved under `examples/disrupted-week/` |
 
 A blocked or failed run must remain visible in the record even if a later run succeeds. Do not infer a failure cause solely from a final status; use the stage trace or command output.

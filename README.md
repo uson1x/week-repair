@@ -1,3 +1,5 @@
+![Week Repair](docs/banner.svg)
+
 # Week Repair
 
 **Repair a disrupted training week. Keep completed work and fixed constraints intact. Show why each change was made.**
@@ -5,6 +7,8 @@
 Week Repair is a small TypeScript CLI with two model steps and a deterministic acceptance gate. A Planner proposes a new schedule. A Reviewer checks the proposal against the request. Code checks the hard rules before a plan can be approved.
 
 The input is a synthetic training schedule. This is a standalone prototype, with no live product integration or production user data. It moves or drops existing sessions; it does not write exercise prescriptions or assess medical suitability.
+
+**Saved live example:** [HTML report](examples/disrupted-week/report.html) · [Full result JSON](examples/disrupted-week/result.json) · [Stage trace](examples/disrupted-week/trace.json). Codex produced the captured repair in 23.48 seconds with one Planner call and one Reviewer call; all schedule checks passed. The input data is synthetic. Open the HTML file locally or run the replay below.
 
 ## Try the demo
 
