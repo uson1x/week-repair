@@ -1,0 +1,15 @@
+{
+  "name": "week-repair",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Repair a disrupted training week with two agents and explicit constraint checks.",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "demo": "tsx src/cli.ts --scenario fixtures/disrupted-week.json --out examples/disrupted-week --provider claude",
+    "run": "tsx src/cli.ts",
+    "replay": "tsx src/cli.ts --replay"
+  }
+}
