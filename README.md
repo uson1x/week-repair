@@ -10,6 +10,8 @@ Saved live run. No install or account needed. [See the failure and fix](docs/FAI
 
 **Repair a disrupted training week. Preserve completed sessions. Explain each change.**
 
+This standalone prototype explores how [aitrainingplan.app](https://aitrainingplan.app) could repair a user's week after a missed workout.
+
 Week Repair is a TypeScript CLI. A Planner proposes a schedule. A separate Reviewer checks whether it meets the request. Code checks the schedule rules. A plan needs both checks to pass.
 
 The prototype uses synthetic schedules. It moves or drops existing sessions and leaves exercise prescriptions unchanged. It has no live product integration or production user data.
