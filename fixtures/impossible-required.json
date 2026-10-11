@@ -1,0 +1,17 @@
+{
+  "id": "impossible-required",
+  "title": "Required sessions cannot fit in a synthetic week",
+  "request": "Keep both required sessions. I only have 30 minutes available on Sunday and cannot add time this week. Ask which constraint I can change if the sessions cannot fit. Keep prescriptions unchanged.",
+  "asOf": "2026-10-11",
+  "weekStart": "2026-10-05",
+  "weekEnd": "2026-10-11",
+  "availableMinutes": {"2026-10-11": 30},
+  "availableEquipment": ["running shoes"],
+  "maxWeeklyMinutes": 120,
+  "minDaysBetweenHardSessions": 2,
+  "maxSessionsPerDay": 1,
+  "sessions": [
+    {"id": "required-missed", "title": "Missed easy run", "date": "2026-10-09", "durationMinutes": 30, "intensity": "easy", "equipment": ["running shoes"], "status": "missed", "locked": false, "priority": "required"},
+    {"id": "required-sunday", "title": "Sunday easy run", "date": "2026-10-11", "durationMinutes": 30, "intensity": "easy", "equipment": ["running shoes"], "status": "planned", "locked": false, "priority": "required"}
+  ]
+}

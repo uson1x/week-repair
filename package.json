@@ -4,12 +4,20 @@
   "private": true,
   "type": "module",
   "description": "Repair a disrupted training week with two agents and explicit constraint checks.",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "check": "tsc --noEmit",
-    "test": "tsx --test tests/*.test.ts",
-    "demo": "tsx src/cli.ts --scenario fixtures/disrupted-week.json --out examples/disrupted-week --provider claude",
-    "run": "tsx src/cli.ts",
-    "replay": "tsx src/cli.ts --replay"
+    "test": "node --import tsx --test tests/*.test.ts",
+    "demo": "node --import tsx src/cli.ts replay examples/disrupted-week/result.json --out runs/replay",
+    "live": "node --import tsx src/cli.ts --scenario fixtures/disrupted-week.json --out runs/live --provider claude",
+    "run": "node --import tsx src/cli.ts",
+    "replay": "node --import tsx src/cli.ts replay"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
   }
 }

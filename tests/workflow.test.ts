@@ -1,0 +1,147 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtemp, writeFile, chmod, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { renderReport } from '../src/report.js';
+import type { Provider, Scenario, Proposal, Review } from '../src/domain.js';
+import { runWorkflow } from '../src/workflow.js';
+import { parseClaudeOutput, ProviderError, ClaudeProvider } from '../src/provider.js';
+
+// Explicitly synthetic scripted provider: these tests provide no live model evidence.
+class ScriptedFake implements Provider {
+  identity = 'test:scripted-fake';
+  calls: { role: string; system: string; payload: unknown }[] = [];
+  constructor(private script: unknown[]) {}
+  async generate<T>(role: 'planner' | 'reviewer', system: string, payload: unknown): Promise<T> {
+    this.calls.push({ role, system, payload });
+    if (!this.script.length) throw new Error('Scripted fake exhausted.');
+    const output = this.script.shift();
+    if (output instanceof Error) throw output;
+    return structuredClone(output) as T;
+  }
+}
+const scenario: Scenario = {
+  id: 'test', title: 'Synthetic week', request: 'Keep the required missed session and avoid Saturday.',
+  asOf: '2026-10-07', weekStart: '2026-10-05', weekEnd: '2026-10-11',
+  availableMinutes: { '2026-10-07': 60, '2026-10-08': 60, '2026-10-09': 60, '2026-10-10': 0, '2026-10-11': 60 },
+  availableEquipment: ['mat'], maxWeeklyMinutes: 120, minDaysBetweenHardSessions: 2, maxSessionsPerDay: 1,
+  sessions: [
+    { id: 'done', title: 'Completed', date: '2026-10-05', durationMinutes: 30, intensity: 'hard', equipment: ['mat'], status: 'completed', locked: true, priority: 'required' },
+    { id: 'missed', title: 'Missed', date: '2026-10-06', durationMinutes: 30, intensity: 'hard', equipment: ['mat'], status: 'missed', locked: false, priority: 'required' },
+  ],
+};
+const ready: Proposal = { status: 'ready', summary: 'Move the missed session to Wednesday.', questions: [], decisions: [
+  { sessionId: 'done', action: 'keep', date: '2026-10-05', reason: 'Keep completed history.' },
+  { sessionId: 'missed', action: 'move', date: '2026-10-07', reason: 'Fits available time and spacing.' },
+] };
+const approve: Review = { approved: true, issues: [], strengths: ['Preserves the required sessions.'] };
+const reject: Review = { approved: false, issues: ['Prefer Friday to preserve the requested rest day.'], strengths: [] };
+const invalid: Proposal = { ...ready, decisions: [ready.decisions[0]!, { sessionId: 'missed', action: 'drop', date: null, reason: 'Skip it.' }] };
+
+test('two independent role calls approve only after deterministic validation', async () => {
+  const provider = new ScriptedFake([ready, approve]);
+  const result = await runWorkflow(scenario, provider);
+  assert.equal(result.status, 'approved');
+  assert.deepEqual(provider.calls.map((call) => call.role), ['planner', 'reviewer']);
+  assert.notEqual(provider.calls[0]!.system, provider.calls[1]!.system);
+  assert.deepEqual((provider.calls[1]!.payload as { deterministicViolations: string[] }).deterministicViolations, []);
+  assert.equal(result.provider, 'test:scripted-fake');
+  assert.deepEqual(result.trace.map((event) => event.stage), ['planner', 'validator', 'reviewer']);
+});
+
+test('deterministic rejection causes a real control-flow retry with actionable feedback', async () => {
+  const provider = new ScriptedFake([invalid, approve, ready, approve]);
+  const result = await runWorkflow(scenario, provider);
+  assert.equal(result.status, 'approved');
+  assert.equal(provider.calls.length, 4);
+  const feedback = (provider.calls[2]!.payload as { repairFeedback: { deterministicViolations: string[] } }).repairFeedback;
+  assert.ok(feedback.deterministicViolations.length > 0);
+  assert.equal(result.trace.at(-1)!.attempt, 2);
+});
+
+test('reviewer rejection also triggers a repair even when deterministic checks pass', async () => {
+  const provider = new ScriptedFake([ready, reject, ready, approve]);
+  const result = await runWorkflow(scenario, provider);
+  assert.equal(result.status, 'approved');
+  assert.deepEqual((provider.calls[2]!.payload as { repairFeedback: { reviewerIssues: string[] } }).repairFeedback.reviewerIssues, reject.issues);
+});
+
+test('exhausted loop makes at most three proposals and never approves rejected constraints', async () => {
+  const provider = new ScriptedFake([invalid, approve, invalid, approve, invalid, approve]);
+  const result = await runWorkflow(scenario, provider);
+  assert.equal(result.status, 'blocked');
+  assert.equal(provider.calls.length, 6);
+  assert.equal(result.trace.filter((event) => event.stage === 'planner').length, 3);
+  assert.match(result.trace.at(-1)!.errors![0]!, /budget exhausted/);
+});
+
+test('rejected review stays blocked when repair budget is zero', async () => {
+  const provider = new ScriptedFake([ready, reject]);
+  assert.equal((await runWorkflow(scenario, provider, { maxRepairRounds: 0 })).status, 'blocked');
+});
+
+test('malformed reviewer output is recorded and fails closed without truthy coercion', async () => {
+  for (const output of [{ approved: 'true', issues: [], strengths: [] }, null, { approved: true, issues: ['Unresolved issue.'], strengths: [] }]) {
+    const provider = new ScriptedFake([ready, output]);
+    const result = await runWorkflow(scenario, provider);
+    assert.equal(result.status, 'blocked');
+    assert.equal(result.review, null);
+    assert.ok(result.trace.at(-1)!.errors!.length > 0);
+    assert.deepEqual(result.trace.at(-1)!.output, output);
+  }
+});
+
+test('clarification remains clarification even with reviewer approval', async () => {
+  const clarification = { status: 'needs_clarification', summary: 'Need your scheduling preference.', decisions: [], questions: ['Can the required missed session move to Friday?'] };
+  const result = await runWorkflow(scenario, new ScriptedFake([clarification, approve]));
+  assert.equal(result.status, 'needs_clarification');
+});
+
+test('provider timeout and other exceptions yield blocked results with preserved evidence', async () => {
+  for (const error of [new ProviderError('Claude timed out after 75000 ms.', { stdout: 'partial' }), new Error('Provider unavailable.')]) {
+    const result = await runWorkflow(scenario, new ScriptedFake([ready, error]));
+    assert.equal(result.status, 'blocked');
+    assert.equal(result.trace.length, 3);
+    assert.equal(result.trace.at(-1)!.stage, 'reviewer');
+    assert.match(result.trace.at(-1)!.errors![0]!, /timed out|unavailable/);
+    if (error instanceof ProviderError) assert.deepEqual(result.trace.at(-1)!.output, { stdout: 'partial' });
+  }
+});
+
+test('invalid scenario and invalid repair budget block before model execution', async () => {
+  const provider = new ScriptedFake([]);
+  assert.equal((await runWorkflow({ ...scenario, asOf: 'invalid' }, provider)).status, 'blocked');
+  assert.equal((await runWorkflow(scenario, provider, { maxRepairRounds: 3 })).status, 'blocked');
+  assert.equal(provider.calls.length, 0);
+});
+
+test('Claude envelope parsing accepts structured JSON and rejects errors or text', () => {
+  assert.deepEqual(parseClaudeOutput(JSON.stringify({ structured_output: ready })), ready);
+  assert.deepEqual(parseClaudeOutput(JSON.stringify({ result: JSON.stringify(ready) })), ready);
+  assert.throws(() => parseClaudeOutput('{oops'), /malformed JSON/);
+  assert.throws(() => parseClaudeOutput('{"is_error":true,"result":"Oops"}'), /execution error/);
+  assert.throws(() => parseClaudeOutput('{"result":"not JSON"}'), /not structured JSON/);
+});
+
+
+test('malformed planner output remains in trace and blocked report still renders', async () => {
+  for (const malformed of [null, { status: 'ready', summary: 'bad', decisions: 'bad', questions: [] }]) {
+    const result = await runWorkflow(scenario, new ScriptedFake([malformed, approve]), { maxRepairRounds: 0 });
+    assert.equal(result.status, 'blocked');
+    assert.equal(result.proposal, null);
+    assert.deepEqual(result.trace[0]!.output, malformed);
+    assert.match(renderReport(result), /blocked/i);
+  }
+});
+
+test('Claude subprocess timeout kills a hanging test executable', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'week-repair-provider-test-'));
+  const executable = join(dir, 'fake-claude');
+  try {
+    await writeFile(executable, `#!${process.execPath}\nsetInterval(() => {}, 1000);\n`);
+    await chmod(executable, 0o700);
+    const provider = new ClaudeProvider({ executable, timeoutMs: 40 });
+    await assert.rejects(provider.generate('planner', 'test', {}, {}), /timed out after 40 ms/);
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
