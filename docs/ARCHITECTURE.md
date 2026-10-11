@@ -16,6 +16,8 @@ The workflow returns one of three states:
 | `needs_clarification` | The proposal asks a specific question. It is not approved. |
 | `blocked` | The workflow could not obtain an acceptable plan within its limits. |
 
+The Reviewer's `approved` flag means it accepts the response. It can accept a necessary clarification question. That does not approve a schedule: the workflow returns `needs_clarification` until a valid `ready` proposal passes all checks. This distinction was verified after an [observed live failure](FAILURES.md#1-the-reviewer-rejected-a-correct-clarification).
+
 ## Boundaries
 
 | Module | Responsibility |
