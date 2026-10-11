@@ -14,6 +14,8 @@ The input is a synthetic training schedule. This is a standalone prototype, with
 
 The [failure log](docs/FAILURES.md) also shows a real cross-agent error: the Reviewer rejected a correct clarification. The saved before/after runs show the diagnosis and fix.
 
+**[Open the review report](https://blog.theivan.io/week-repair/)** — inspect the saved live run in your browser. No install or account is needed.
+
 ## Try the demo
 
 Use Node.js 22 or later.
