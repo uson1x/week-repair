@@ -4,7 +4,7 @@
 
 Week Repair is a small TypeScript CLI with two model steps and a deterministic acceptance gate. A Planner proposes a new schedule. A Reviewer checks the proposal against the request. Code checks the hard rules before a plan can be approved.
 
-The input is a synthetic training schedule. This is a standalone prototype, with no ATP integration or production user data. It moves or drops existing sessions; it does not write exercise prescriptions or assess medical suitability.
+The input is a synthetic training schedule. This is a standalone prototype, with no live product integration or production user data. It moves or drops existing sessions; it does not write exercise prescriptions or assess medical suitability.
 
 ## Try the demo
 
@@ -18,13 +18,21 @@ npm run demo
 
 The demo replays a saved result. It needs no model account or API key. Open `runs/replay/report.html` in a browser to inspect the proposed schedule, decisions, checks, and stage trace. Replay makes no new model calls; inspect the saved result's provider and trace for its original evidence.
 
-To generate a fresh repair, use an installed, authenticated Claude CLI:
+To generate a fresh repair, use an installed, authenticated Codex CLI, then run:
 
 ```sh
 npm run live
 ```
 
-The Planner and Reviewer run as separate Claude CLI processes with separate prompts and context. Model tools are disabled. An authenticated subscription CLI can run this path without separate API-key setup. See the [review guide](docs/REVIEW.md) for the evidence distinction.
+The provider uses your existing Codex login; no separate API key is required. It defaults to `gpt-6.1-sol`; `CODEX_MODEL` can select another model available to your account, and `CODEX_BIN` can select a CLI executable. The Planner and Reviewer run as separate, ephemeral `codex exec` processes with separate prompts and context. Each runs in a fresh temporary directory with a read-only sandbox. User config, plugins, shell, browser, and app tools are disabled. See the [review guide](docs/REVIEW.md) for the evidence distinction.
+
+Live output is saved to `runs/live/result.json`, `runs/live/trace.json`, and `runs/live/report.html`. The trace is written after each completed stage, so a later failure does not erase the earlier stage evidence.
+
+To use a different scenario or output folder:
+
+```sh
+npm run run -- --scenario fixtures/equipment-restriction.json --out runs/equipment
+```
 
 To render any saved result again:
 

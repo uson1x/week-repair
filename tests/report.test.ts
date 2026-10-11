@@ -21,3 +21,16 @@ test('clarification report cannot appear approved', () => {
   assert.ok(html.includes('Can you add a day?'));
   assert.ok(!html.includes('Approved by workflow'));
 });
+test('invalid scenario still produces a blocked diagnostic report', () => {
+  const bad = { ...result, scenario: { ...result.scenario, sessions: null } } as unknown as WorkflowResult;
+  const html = renderReport(bad);
+  assert.ok(html.includes('Input rejected'));
+  assert.ok(html.includes('No plan was approved'));
+  assert.ok(!html.includes('Approved by workflow'));
+});
+test('malformed blocked replay evidence yields diagnostics instead of a render crash', () => {
+  const bad = { ...result, status: 'blocked', proposal: { ...result.proposal, decisions: 'bad' } } as unknown as WorkflowResult;
+  const html = renderReport(bad);
+  assert.ok(html.includes('Input rejected'));
+  assert.ok(html.includes('No plan was approved'));
+});

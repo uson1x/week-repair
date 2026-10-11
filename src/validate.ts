@@ -72,7 +72,7 @@ export function validateScenario(input: unknown): Scenario {
     if (!isNumber(value.durationMinutes, Number.MIN_VALUE)) errors.push(`${label}.durationMinutes must be a finite positive number.`);
     if (value.intensity !== 'easy' && value.intensity !== 'hard') errors.push(`${label}.intensity must be easy or hard.`);
     uniqueStrings(value.equipment, `${label}.equipment`, errors);
-    if (!['completed', 'missed', 'planned'].includes(String(value.status))) errors.push(`${label}.status must be completed, missed, or planned.`);
+    if (value.status !== 'completed' && value.status !== 'missed' && value.status !== 'planned') errors.push(`${label}.status must be completed, missed, or planned.`);
     if (typeof value.locked !== 'boolean') errors.push(`${label}.locked must be boolean.`);
     if (value.priority !== 'required' && value.priority !== 'optional') errors.push(`${label}.priority must be required or optional.`);
     if (value.status === 'missed' && value.locked === true) errors.push(`${label}: a missed session cannot be locked.`);
@@ -109,7 +109,7 @@ export function validateProposal(scenario: Scenario, proposal: unknown): string[
     if (!isRecord(value)) { errors.push(`${label} must be an object.`); return; }
     unknownFields(value, ['sessionId', 'action', 'date', 'reason'], label, errors);
     if (!isText(value.sessionId)) errors.push(`${label}.sessionId must be a non-empty string.`);
-    if (!['keep', 'move', 'drop'].includes(String(value.action))) errors.push(`${label}.action must be keep, move, or drop.`);
+    if (value.action !== 'keep' && value.action !== 'move' && value.action !== 'drop') errors.push(`${label}.action must be keep, move, or drop.`);
     if (value.date !== null && !isDate(value.date)) errors.push(`${label}.date must be a valid YYYY-MM-DD calendar date or null.`);
     if (!isText(value.reason)) errors.push(`${label}.reason must be a non-empty string.`);
     if (!isText(value.sessionId)) return;

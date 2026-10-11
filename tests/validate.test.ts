@@ -168,3 +168,13 @@ test('malformed proposal shapes return violations without throwing', () => {
     assert.ok(validateProposal(scenario, proposal).length > 0);
   }
 });
+
+test('enum values must be strings; arrays cannot impersonate valid actions or statuses', () => {
+  const scenario = fixture('disrupted-week');
+  const proposal = repaired(scenario);
+  const spoofed = { ...proposal, decisions: proposal.decisions.map(decision => ({ ...decision, action: [decision.action] })) };
+  has(validateProposal(scenario, spoofed), 'action must be');
+  const sessionSpoof = clone(scenario) as unknown as { sessions: Record<string, unknown>[] };
+  sessionSpoof.sessions[0].status = ['completed'];
+  assert.throws(() => validateScenario(sessionSpoof), /status must be/);
+});

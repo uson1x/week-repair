@@ -23,18 +23,18 @@ The workflow returns one of three states:
 | `domain.ts` | Shared data types |
 | `validate.ts` | Input validation and schedule rules |
 | `prompts.ts` | Planner and Reviewer instructions and response schemas |
-| `provider.ts` | Structured generation through a live or fixture provider |
+| `provider.ts` | Structured generation through Codex CLI |
 | `workflow.ts` | Stage order, feedback, attempt limit, and result state |
 | `cli.ts` | Read a scenario, select a provider, and save results |
 | `report.ts` | Render an escaped, static HTML report |
 
-The provider interface is `generate(role, system, payload, schema)`. This boundary lets tests supply controlled responses without calling a model. The live implementation calls Claude CLI separately for each role. The Reviewer receives the original scenario, the proposal, and the rule violations. It does not inherit the Planner's conversation.
+The provider interface is `generate(role, system, payload, schema)`. This boundary lets tests supply controlled responses without calling a model. The live implementation starts a fresh, ephemeral `codex exec` process for each role, using the existing Codex login. Each process runs in a new temporary directory with a read-only sandbox; user config, plugins, shell, browser, and app tools are disabled. Temporary schema and output files are removed after the call. The Reviewer receives the original scenario, the proposal, and the rule violations. It does not inherit the Planner's conversation.
 
 ## Acceptance rules
 
 Input validation rejects malformed or contradictory scenario data. Proposal validation checks shape, complete and unique ID coverage, action/date consistency, and schedule constraints. Completed and locked sessions stay unchanged. Required sessions cannot be dropped. Future sessions must fit the date range, time, equipment, and daily count limits. Completed history still counts toward the weekly total and hard-session spacing; today's equipment and availability do not invalidate completed history.
 
-An invalid proposal cannot become approved because a Reviewer approves it. Reviewer rejection and rule failures feed the next attempt. The retry limit prevents an open-ended model conversation. A clarification request must include a specific question and cannot be displayed as an approved repair.
+An invalid proposal cannot become approved because a Reviewer approves it. Reviewer rejection and rule failures feed the next attempt. The default limit is one initial attempt plus at most two repair rounds. A malformed Reviewer response or provider error stops with a blocked result. A clarification request must include a specific question and cannot be displayed as an approved repair.
 
 ## Trace and report
 

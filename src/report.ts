@@ -1,10 +1,20 @@
 import type { WorkflowResult } from './domain.js';
+import { validateScenario } from './validate.js';
 
 const escape = (value: unknown): string => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
 const pretty = (value: unknown) => escape(JSON.stringify(value, null, 2));
 
 /** A self-contained report. Model text is data, never executable HTML. */
 export function renderReport(result: WorkflowResult): string {
+  try {
+    validateScenario(result.scenario);
+    return renderValidReport(result);
+  } catch (error) {
+    return `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Week Repair — input rejected</title><body style="font:16px/1.6 system-ui;max-width:900px;margin:50px auto;padding:24px"><h1>Input rejected</h1><p>No plan was approved. Correct the scenario and run again.</p><pre style="white-space:pre-wrap">${escape(error instanceof Error ? error.message : error)}</pre><h2>Recorded trace</h2><pre style="white-space:pre-wrap">${pretty(result.trace)}</pre></body></html>`;
+  }
+}
+
+function renderValidReport(result: WorkflowResult): string {
   const { scenario, proposal, review, trace } = result;
   const accepted = result.status === 'approved';
   const status = accepted ? 'Approved by workflow' : result.status === 'needs_clarification' ? 'Your input is needed' : 'Plan not approved';

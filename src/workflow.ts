@@ -8,23 +8,26 @@ export interface WorkflowOptions {
   onTrace?: (event: TraceEvent, trace: readonly TraceEvent[]) => void | Promise<void>;
 }
 
-function proposalHasShape(value: unknown): value is Proposal {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+function displayProposal(value: unknown): Proposal | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const data = value as Record<string, unknown>;
-  return ['ready', 'needs_clarification'].includes(String(data.status)) && typeof data.summary === 'string' &&
+  const decisions = data.decisions === undefined && data.status === 'needs_clarification' ? [] : data.decisions;
+  const shaped = typeof data.status === 'string' && ['ready', 'needs_clarification'].includes(data.status) && typeof data.summary === 'string' &&
     Array.isArray(data.questions) && data.questions.every((question) => typeof question === 'string') &&
-    Array.isArray(data.decisions) && data.decisions.every((decision) => {
+    Array.isArray(decisions) && decisions.every((decision) => {
       if (!decision || typeof decision !== 'object' || Array.isArray(decision)) return false;
       const d = decision as Record<string, unknown>;
-      return typeof d.sessionId === 'string' && ['keep', 'move', 'drop'].includes(String(d.action)) &&
+      return typeof d.sessionId === 'string' && typeof d.action === 'string' && ['keep', 'move', 'drop'].includes(d.action) &&
         (typeof d.date === 'string' || d.date === null) && typeof d.reason === 'string';
     });
+  return shaped ? { ...data, decisions } as unknown as Proposal : null;
 }
 
-function reviewErrors(value: unknown): string[] {
+export function validateReview(value: unknown): string[] {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return ['Reviewer output must be an object.'];
   const data = value as Record<string, unknown>;
   const errors: string[] = [];
+  for (const key of Object.keys(data)) if (!['approved', 'issues', 'strengths'].includes(key)) errors.push(`Reviewer output has unknown field ${key}.`);
   if (typeof data.approved !== 'boolean') errors.push('Reviewer approved must be a boolean.');
   for (const field of ['issues', 'strengths']) {
     if (!Array.isArray(data[field]) || !(data[field] as unknown[]).every((item) => typeof item === 'string' && item.trim().length > 0)) errors.push(`Reviewer ${field} must be an array of nonempty strings.`);
@@ -53,10 +56,10 @@ export async function runWorkflow(scenario: Scenario, provider: Provider, option
       stage = 'validator'; stageStart = Date.now(); stageInput = rawProposal;
       const violations = validateProposal(scenario, rawProposal);
       await add({ stage, attempt, durationMs: Date.now() - stageStart, input: rawProposal, output: { violations }, errors: violations });
-      result.proposal = proposalHasShape(rawProposal) ? rawProposal : null;
+      result.proposal = displayProposal(rawProposal);
       stage = 'reviewer'; stageStart = Date.now(); stageInput = { scenario, proposal: rawProposal, deterministicViolations: violations };
       const rawReview = await provider.generate<unknown>('reviewer', REVIEWER_SYSTEM, stageInput, reviewSchema);
-      const malformed = reviewErrors(rawReview);
+      const malformed = validateReview(rawReview);
       await add({ stage, attempt, durationMs: Date.now() - stageStart, input: stageInput, output: rawReview, errors: malformed });
       if (malformed.length) return finish();
       result.review = rawReview as Review;

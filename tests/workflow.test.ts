@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { renderReport } from '../src/report.js';
 import type { Provider, Scenario, Proposal, Review } from '../src/domain.js';
 import { runWorkflow } from '../src/workflow.js';
-import { parseClaudeOutput, ProviderError, ClaudeProvider } from '../src/provider.js';
+import { parseCodexOutput, ProviderError, CodexProvider } from '../src/provider.js';
 
 // Explicitly synthetic scripted provider: these tests provide no live model evidence.
 class ScriptedFake implements Provider {
@@ -99,7 +99,7 @@ test('clarification remains clarification even with reviewer approval', async ()
 });
 
 test('provider timeout and other exceptions yield blocked results with preserved evidence', async () => {
-  for (const error of [new ProviderError('Claude timed out after 75000 ms.', { stdout: 'partial' }), new Error('Provider unavailable.')]) {
+  for (const error of [new ProviderError('Codex timed out after 75000 ms.', { stdout: 'partial' }), new Error('Provider unavailable.')]) {
     const result = await runWorkflow(scenario, new ScriptedFake([ready, error]));
     assert.equal(result.status, 'blocked');
     assert.equal(result.trace.length, 3);
@@ -116,14 +116,10 @@ test('invalid scenario and invalid repair budget block before model execution', 
   assert.equal(provider.calls.length, 0);
 });
 
-test('Claude envelope parsing accepts structured JSON and rejects errors or text', () => {
-  assert.deepEqual(parseClaudeOutput(JSON.stringify({ structured_output: ready })), ready);
-  assert.deepEqual(parseClaudeOutput(JSON.stringify({ result: JSON.stringify(ready) })), ready);
-  assert.throws(() => parseClaudeOutput('{oops'), /malformed JSON/);
-  assert.throws(() => parseClaudeOutput('{"is_error":true,"result":"Oops"}'), /execution error/);
-  assert.throws(() => parseClaudeOutput('{"result":"not JSON"}'), /not structured JSON/);
+test('Codex final message parsing accepts JSON and rejects malformed text', () => {
+  assert.deepEqual(parseCodexOutput(JSON.stringify(ready)), ready);
+  assert.throws(() => parseCodexOutput('{oops'), /malformed JSON/);
 });
-
 
 test('malformed planner output remains in trace and blocked report still renders', async () => {
   for (const malformed of [null, { status: 'ready', summary: 'bad', decisions: 'bad', questions: [] }]) {
@@ -135,13 +131,59 @@ test('malformed planner output remains in trace and blocked report still renders
   }
 });
 
-test('Claude subprocess timeout kills a hanging test executable', async () => {
+test('Codex subprocess timeout kills a hanging test executable', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'week-repair-provider-test-'));
-  const executable = join(dir, 'fake-claude');
+  const executable = join(dir, 'fake-codex');
   try {
     await writeFile(executable, `#!${process.execPath}\nsetInterval(() => {}, 1000);\n`);
     await chmod(executable, 0o700);
-    const provider = new ClaudeProvider({ executable, timeoutMs: 40 });
+    const provider = new CodexProvider({ executable, timeoutMs: 40 });
     await assert.rejects(provider.generate('planner', 'test', {}, {}), /timed out after 40 ms/);
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
+
+
+test('clarification may omit decisions without being promoted to ready', async () => {
+  const clarification = { status: 'needs_clarification', summary: 'Need your preference.', questions: ['Can the missed session move to Friday?'] };
+  const result = await runWorkflow(scenario, new ScriptedFake([clarification, approve]));
+  assert.equal(result.status, 'needs_clarification');
+  assert.deepEqual(result.proposal!.decisions, []);
+  assert.deepEqual(result.trace[0]!.output, clarification);
+});
+
+
+test('Codex subprocess output limit rejects oversized test executable output', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'week-repair-output-test-'));
+  const executable = join(dir, 'fake-codex');
+  try {
+    await writeFile(executable, `#!${process.execPath}\nprocess.stdout.write('x'.repeat(4096));\n`);
+    await chmod(executable, 0o700);
+    const provider = new CodexProvider({ executable, timeoutMs: 2000, maxOutputBytes: 256 });
+    await assert.rejects(provider.generate('planner', 'test', {}, {}), /output size limit/);
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
+
+
+
+
+test('Codex test executable receives isolated schema, fresh cwd, stdin and disabled tools', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'week-repair-spawn-test-'));
+  const executable = join(dir, 'fake-codex');
+  try {
+    await writeFile(executable, `#!${process.execPath}\nconst fs = require('node:fs');\nconst args = process.argv.slice(2);\nlet payload = '';\nprocess.stdin.on('data', chunk => payload += chunk);\nprocess.stdin.on('end', () => fs.writeFileSync(args[args.indexOf('--output-last-message') + 1], JSON.stringify({args, cwd: process.cwd(), payload})));\n`);
+    await chmod(executable, 0o700);
+    const provider = new CodexProvider({ executable, model: 'synthetic-test-model' });
+    const output = await provider.generate<{ args: string[]; cwd: string; payload: string }>('planner', 'Synthetic planner system.', { marker: 'synthetic' }, {});
+    assert.ok(output.args.includes('--ephemeral'));
+    assert.ok(output.args.includes('--ignore-user-config'));
+    assert.ok(output.args.includes('read-only'));
+    assert.ok(output.args.includes('shell_tool'));
+    assert.ok(output.args.includes('web_search="disabled"'));
+    assert.ok(output.args.includes('--output-schema'));
+    assert.match(output.payload, /Synthetic planner system/);
+    assert.match(output.payload, /"marker":"synthetic"/);
+    assert.notEqual(output.cwd, process.cwd());
+    // Provider removes each isolated work directory after reading the result.
+    await assert.rejects(import('node:fs/promises').then(fs => fs.stat(output.cwd)), /ENOENT/);
   } finally { await rm(dir, { recursive: true, force: true }); }
 });

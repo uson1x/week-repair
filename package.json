@@ -11,7 +11,7 @@
     "check": "tsc --noEmit",
     "test": "node --import tsx --test tests/*.test.ts",
     "demo": "node --import tsx src/cli.ts replay examples/disrupted-week/result.json --out runs/replay",
-    "live": "node --import tsx src/cli.ts --scenario fixtures/disrupted-week.json --out runs/live --provider claude",
+    "live": "node --import tsx src/cli.ts --scenario fixtures/disrupted-week.json --out runs/live --provider codex",
     "run": "node --import tsx src/cli.ts",
     "replay": "node --import tsx src/cli.ts replay"
   },
