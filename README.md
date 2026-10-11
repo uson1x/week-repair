@@ -4,15 +4,15 @@
 
 [![Check](https://github.com/uson1x/week-repair/actions/workflows/ci.yml/badge.svg)](https://github.com/uson1x/week-repair/actions/workflows/ci.yml)
 
-**Repair a disrupted training week. Keep completed work and fixed constraints intact. Show why each change was made.**
+**Repair a disrupted training week. Preserve completed sessions. Explain each change.**
 
-Week Repair is a small TypeScript CLI with two model steps and a deterministic acceptance gate. A Planner proposes a new schedule. A Reviewer checks the proposal against the request. Code checks the hard rules before a plan can be approved.
+Week Repair is a TypeScript CLI. A Planner proposes a schedule. A separate Reviewer checks whether it meets the request. Code checks the schedule rules. A plan needs both checks to pass.
 
-The input is a synthetic training schedule. This is a standalone prototype, with no live product integration or production user data. It moves or drops existing sessions; it does not write exercise prescriptions or assess medical suitability.
+The prototype uses synthetic schedules. It moves or drops existing sessions and leaves exercise prescriptions unchanged. It has no live product integration or production user data.
 
-**Saved live example:** [HTML report](examples/disrupted-week/report.html) · [Full result JSON](examples/disrupted-week/result.json) · [Stage trace](examples/disrupted-week/trace.json). Codex produced the captured repair in 23.48 seconds with one Planner call and one Reviewer call; all schedule checks passed. The input data is synthetic. Open the HTML file locally or run the replay below.
+**Saved live example:** [HTML report](examples/disrupted-week/report.html) · [Full result JSON](examples/disrupted-week/result.json) · [Stage trace](examples/disrupted-week/trace.json). Codex produced this repair in 23.48 seconds with one Planner call and one Reviewer call. All schedule checks passed. Open the HTML file locally or run the replay below.
 
-The [failure log](docs/FAILURES.md) also shows a real cross-agent error: the Reviewer rejected a correct clarification. The saved before/after runs show the diagnosis and fix.
+The [failure log](docs/FAILURES.md) shows how the Reviewer rejected a correct clarification, why it happened, and what fixed it. Both runs are saved.
 
 **[Open the review report](https://blog.theivan.io/week-repair/)** — inspect the saved live run in your browser. No install or account is needed.
 
@@ -26,17 +26,17 @@ npm test
 npm run demo
 ```
 
-The demo replays a saved result. It needs no model account or API key. Open `runs/replay/report.html` in a browser to inspect the proposed schedule, decisions, checks, and stage trace. Replay makes no new model calls; inspect the saved result's provider and trace for its original evidence.
+The demo renders a saved result without calling a model. It needs no account or API key. Open `runs/replay/report.html` to inspect the schedule, decisions, checks, and trace.
 
-To generate a fresh repair, use an installed, authenticated Codex CLI, then run:
+For a new repair, install Codex CLI, sign in, and run:
 
 ```sh
 npm run live
 ```
 
-The provider uses your existing Codex login; no separate API key is required. It defaults to `gpt-6.1-sol`; `CODEX_MODEL` can select another model available to your account, and `CODEX_BIN` can select a CLI executable. The Planner and Reviewer run as separate, ephemeral `codex exec` processes with separate prompts and context. Each runs in a fresh temporary directory with a read-only sandbox. User config, plugins, shell, browser, and app tools are disabled. See the [review guide](docs/REVIEW.md) for the evidence distinction.
+The provider uses your Codex login, needs no separate API key, and defaults to `gpt-6.1-sol`. Set `CODEX_MODEL` to choose another model available to your account, or `CODEX_BIN` to choose a CLI executable. Each role runs in a separate `codex exec` process with its own prompt, context, and temporary directory. Processes are ephemeral and use a read-only sandbox. User config, plugins, shell, browser, and app tools are disabled. The [review guide](docs/REVIEW.md) explains what tests, live runs, and replay prove.
 
-Live output is saved to `runs/live/result.json`, `runs/live/trace.json`, and `runs/live/report.html`. The trace is written after each completed stage, so a later failure does not erase the earlier stage evidence.
+Live runs save `runs/live/result.json`, `runs/live/trace.json`, and `runs/live/report.html`. The trace is saved after each stage, preserving earlier results if a later call fails.
 
 To use a different scenario or output folder:
 
@@ -53,16 +53,10 @@ npm run replay -- examples/disrupted-week/result.json
 ## How a repair is accepted
 
 ```text
-Scenario → validate input → Planner → deterministic checks → Reviewer
-                              ↑                              │
-                              └──── bounded repair feedback ─┘
-                                                             │
-                                     all checks pass + approval
-                                                             ↓
-                                                   JSON + HTML report
+Scenario → input checks → Planner → schedule checks → Reviewer → JSON + HTML report
 ```
 
-There are at most two repair rounds. A model cannot waive a failed check. Missing information produces a clarification request. Exhausted retries produce a blocked result. Neither result is an approved plan.
+The workflow allows one initial attempt and up to two repair rounds. Failed checks prevent approval. Missing information produces a clarification request. Exhausted retries produce a blocked result.
 
 The checks preserve completed and locked sessions, keep required sessions, enforce dates and capacity, check equipment and daily session limits, count completed work in the weekly total, and enforce spacing between hard sessions. Every original session needs exactly one decision. A repair cannot invent a session or alter its duration or intensity.
 
@@ -82,4 +76,4 @@ The checks preserve completed and locked sessions, keep required sessions, enfor
 
 ## Limits
 
-Two independent calls do not imply independent model families or eliminate shared model errors. The Reviewer supplies judgment; code checks only the constraints represented in the input. The prototype has no calendar sync, persistence service, deployment, or user study. It does not validate training safety. Fixture tests show software behavior, not model reliability in production.
+Both calls use the same model and can share errors. Code checks only the rules in the input. The prototype has no calendar sync, persistence service, hosted workflow, or user study. It does not assess training safety. Tests cover specific cases; production reliability is unmeasured.

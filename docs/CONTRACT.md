@@ -1,6 +1,6 @@
 # Week Repair: build contract
 
-TypeScript CLI. No database, account, deployed service, or access to ATP code. A static HTML report is a review artifact. Two real independent model steps: Planner proposes a repair, Reviewer checks intent and tradeoffs. Deterministic checks control acceptance. At most two repair rounds. Do not change exercise prescriptions or claim medical validity.
+A TypeScript CLI with a static HTML report. No database, application account, hosted workflow, or external product code. The Planner proposes a repair; a separate Reviewer checks intent and tradeoffs. Code checks control approval. Allow at most two repair rounds. Keep exercise prescriptions unchanged. Do not claim the tool assesses training safety.
 
 Input `Scenario`: `id`, `title`, `request`, `asOf` (YYYY-MM-DD), `weekStart`, `weekEnd`, `availableMinutes` (date:number), `availableEquipment` (string[]), `maxWeeklyMinutes` (number), `minDaysBetweenHardSessions` (number, day distance), `maxSessionsPerDay` (number), `sessions` (Session[]).
 
@@ -14,5 +14,5 @@ Validation: exported `validateScenario(input: unknown): Scenario` throws on malf
 
 Pipeline: `runWorkflow(scenario, provider, options?)` returns a WorkflowResult. Provider interface `generate<T>(role: 'planner'|'reviewer', system: string, payload: unknown, schema: object): Promise<T>`. Save complete structured stage outputs, violations, duration, attempts, provider identity (no secrets). `WorkflowResult`: scenario, status ('approved'|'needs_clarification'|'blocked'), proposal (Proposal|null), review (Review|null), trace (TraceEvent[]), startedAt, elapsedMs, provider. TraceEvent: stage, attempt, durationMs, input (unknown optional), output (unknown optional), errors (string[] optional).
 
-Output report accepts WorkflowResult and uses escaped text. Distinguish live model execution from replay/fixture evidence. Public examples contain synthetic data only. No hidden assessment wording, private CV, employer code, or personal files in repo.
+Output report accepts WorkflowResult and uses escaped text. Distinguish live model execution from replay/fixture evidence. Public examples contain synthetic data only. Keep private documents, employer code, credentials, and personal files out of the repository.
 

@@ -7,7 +7,7 @@ import { runWorkflow, validateReview } from './workflow.js';
 import { validateProposal, validateScenario } from './validate.js';
 import { renderReport } from './report.js';
 
-const usage = `Week Repair\n  npm run demo  (saved evidence replay)\n  npm run live  (live model run)\n  npm run run -- --scenario fixtures/disrupted-week.json --out runs/disrupted-week --provider codex\n  npm run replay -- examples/disrupted-week/result.json [--out runs/replay]\n\nLive and run execute LIVE independent Planner and Reviewer model calls.\nReplay renders saved evidence and does not call a model. Requires Node 22+ and an authenticated Codex CLI for live execution.\nOptional CODEX_MODEL selects a model; CODEX_BIN selects a Codex executable.\n`;
+const usage = `Week Repair\n  npm run demo  (view a saved run)\n  npm run live  (run the agents)\n  npm run run -- --scenario fixtures/disrupted-week.json --out runs/disrupted-week --provider codex\n  npm run replay -- examples/disrupted-week/result.json [--out runs/replay]\n\nLive runs call a Planner and a separate Reviewer through Codex CLI.\nReplay creates a report from a saved result, without model calls.\nRequires Node 22+. For live runs, install Codex CLI and log in.\nSet CODEX_MODEL to choose a model or CODEX_BIN to choose the Codex executable.\n`;
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
@@ -35,7 +35,7 @@ async function main(): Promise<void> {
     if (saved.status === 'approved' && (validateProposal(saved.scenario, saved.proposal).length || saved.proposal?.status !== 'ready' || saved.review?.approved !== true || validateReview(saved.review).length)) throw new Error('Saved approval fails verification; replay refused.');
     if (saved.status === 'needs_clarification' && (saved.proposal?.status !== 'needs_clarification' || validateProposal(saved.scenario, saved.proposal).length || saved.review?.approved !== true || validateReview(saved.review).length)) throw new Error('Saved clarification fails verification; replay refused.');
     result = { ...saved, provider: `replay:${saved.provider}` };
-    process.stderr.write('REPLAY: rendering saved evidence; no model calls.\n');
+    process.stderr.write('Replay: creating a report from a saved run. No model calls.\n');
   } else {
     if (positional.length) throw new Error('Use --scenario for the input file.');
     const providerName = flags.get('--provider') ?? 'codex';
@@ -43,7 +43,7 @@ async function main(): Promise<void> {
     const scenarioPath = resolve(flags.get('--scenario') ?? 'fixtures/disrupted-week.json');
     const scenario = JSON.parse(await readFile(scenarioPath, 'utf8')) as Scenario;
     const provider = new CodexProvider();
-    process.stderr.write(`LIVE: ${provider.identity}; two independent model stages; at most two repairs.\n`);
+    process.stderr.write(`Live run: ${provider.identity}; Planner, then Reviewer; at most two repair rounds.\n`);
     // Each completed stage is persisted before the next model call, including failures.
     result = await runWorkflow(scenario, provider, { onTrace: async (event, trace) => {
       process.stderr.write(`Attempt ${event.attempt}: ${event.stage} (${event.durationMs} ms)${event.errors?.length ? `; ${event.errors.length} issue(s)` : ''}\n`);
