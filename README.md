@@ -1,6 +1,10 @@
-![Week Repair](docs/banner.svg)
-
 # Week Repair
+
+### [Open the HTML report →](https://blog.theivan.io/week-repair/)
+
+Saved live run. No install or account needed. [See the failure and fix](docs/FAILURES.md).
+
+[![Week Repair — open the HTML report](docs/banner.svg)](https://blog.theivan.io/week-repair/)
 
 [![Check](https://github.com/uson1x/week-repair/actions/workflows/ci.yml/badge.svg)](https://github.com/uson1x/week-repair/actions/workflows/ci.yml)
 
@@ -10,11 +14,9 @@ Week Repair is a TypeScript CLI. A Planner proposes a schedule. A separate Revie
 
 The prototype uses synthetic schedules. It moves or drops existing sessions and leaves exercise prescriptions unchanged. It has no live product integration or production user data.
 
-**Saved live example:** [HTML report](examples/disrupted-week/report.html) · [Full result JSON](examples/disrupted-week/result.json) · [Stage trace](examples/disrupted-week/trace.json). Codex produced this repair in 23.48 seconds with one Planner call and one Reviewer call. All schedule checks passed. Open the HTML file locally or run the replay below.
+**Saved live example:** [HTML report](https://blog.theivan.io/week-repair/) · [Full result JSON](examples/disrupted-week/result.json) · [Stage trace](examples/disrupted-week/trace.json). Codex produced this repair in 23.48 seconds with one Planner call and one Reviewer call. All schedule checks passed. Open the report above or run the replay below.
 
 The [failure log](docs/FAILURES.md) shows how the Reviewer rejected a correct clarification, why it happened, and what fixed it. Both runs are saved.
-
-**[Open the review report](https://blog.theivan.io/week-repair/)** — inspect the saved live run in your browser. No install or account is needed.
 
 ## Try the demo
 
